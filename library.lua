@@ -1,168 +1,125 @@
-local library = {}
+-- Roblox ImGui Style Menu Script
 
--- Main library class
+local library = {} -- Table for library functions and classes
+
+-- Function to create the main window
 function library:CreateWindow(title)
-    local window = {}
-    window.title = title
-    window.tabs = {}
-
-    -- Create a new tab inside the window
-    function window:CreateTab(name)
-        local tab = {}
-        tab.name = name
-        tab.elements = {}
-
-        -- Create a label
-        function tab:CreateLabel(text)
-            local label = {}
-            label.text = text
-            table.insert(tab.elements, label)
-
-            function label:Show()
-                print("Label:", self.text)
-            end
-
-            return label
-        end
-
-        -- Create a dropdown
-        function tab:CreateDropdown(label, options, callback)
-            local dropdown = {}
-            dropdown.label = label
-            dropdown.options = options
-            dropdown.selected = options[1]
-            dropdown.callback = callback
-            table.insert(tab.elements, dropdown)
-
-            function dropdown:Select(option)
-                self.selected = option
-                self.callback(option)
-            end
-
-            return dropdown
-        end
-
-        -- Create a slider
-        function tab:CreateSlider(label, min, max, callback)
-            local slider = {}
-            slider.label = label
-            slider.min = min
-            slider.max = max
-            slider.value = min
-            slider.callback = callback
-            table.insert(tab.elements, slider)
-
-            function slider:Set(value)
-                self.value = math.clamp(value, self.min, self.max)
-                self.callback(self.value)
-            end
-
-            return slider
-        end
-
-        -- Create a toggle switch
-        function tab:CreateToggle(label, callback)
-            local toggle = {}
-            toggle.label = label
-            toggle.state = false
-            toggle.callback = callback
-            table.insert(tab.elements, toggle)
-
-            -- Simulate toggle action
-            function toggle:Toggle()
-                self.state = not self.state
-                self.callback(self.state)
-            end
-
-            return toggle
-        end
-
-        -- Create a checkbox
-        function tab:CreateCheckbox(label, callback)
-            local checkbox = {}
-            checkbox.label = label
-            checkbox.checked = false
-            checkbox.callback = callback
-            table.insert(tab.elements, checkbox)
-
-            function checkbox:Check()
-                self.checked = not self.checked
-                self.callback(self.checked)
-            end
-
-            return checkbox
-        end
-
-        -- Create a button
-        function tab:CreateButton(label, callback)
-            local button = {}
-            button.label = label
-            button.callback = callback
-            table.insert(tab.elements, button)
-
-            function button:Press()
-                self.callback()
-            end
-
-            return button
-        end
-
-        -- Add the tab to the window
-        table.insert(window.tabs, tab)
-        return tab
-    end
-
-    -- Add a close button
-    function window:AddCloseButton(callback)
-        local closeButton = {}
-        closeButton.callback = callback
-        window.closeButton = closeButton
-    end
-
-    -- Show the window
-    function window:Show()
-        print("Showing window:", self.title)
-    end
-
-    -- Hide the window
-    function window:Hide()
-        print("Hiding window:", self.title)
-    end
-
-    return window
+    local Window = Instance.new("ScreenGui")
+    local MainFrame = Instance.new("Frame")
+    local TitleBar = Instance.new("Frame")
+    local Title = Instance.new("TextLabel")
+    local CloseButton = Instance.new("TextButton")
+    
+    -- Properties
+    Window.Name = "ExternalMenu"
+    Window.Parent = game.CoreGui
+    
+    MainFrame.Name = "MainFrame"
+    MainFrame.Parent = Window
+    MainFrame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+    MainFrame.Size = UDim2.new(0, 300, 0, 400)
+    MainFrame.Position = UDim2.new(0.3, 0, 0.3, 0)
+    MainFrame.BorderSizePixel = 0
+    MainFrame.Draggable = true -- Makes the UI draggable
+    MainFrame.Active = true
+    
+    TitleBar.Name = "TitleBar"
+    TitleBar.Parent = MainFrame
+    TitleBar.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
+    TitleBar.Size = UDim2.new(1, 0, 0, 30)
+    TitleBar.BorderSizePixel = 0
+    
+    Title.Name = "Title"
+    Title.Parent = TitleBar
+    Title.Text = title or "Menu"
+    Title.Font = Enum.Font.SourceSansBold
+    Title.TextSize = 18
+    Title.TextColor3 = Color3.fromRGB(255, 255, 255)
+    Title.Size = UDim2.new(0, 250, 0, 30)
+    Title.Position = UDim2.new(0, 10, 0, 0)
+    
+    CloseButton.Name = "CloseButton"
+    CloseButton.Parent = TitleBar
+    CloseButton.Text = "X"
+    CloseButton.Font = Enum.Font.SourceSansBold
+    CloseButton.TextSize = 18
+    CloseButton.TextColor3 = Color3.fromRGB(255, 0, 0)
+    CloseButton.Size = UDim2.new(0, 30, 0, 30)
+    CloseButton.Position = UDim2.new(1, -30, 0, 0)
+    
+    -- Close functionality
+    CloseButton.MouseButton1Click:Connect(function()
+        Window.Enabled = not Window.Enabled
+    end)
+    
+    return {
+        MainFrame = MainFrame,
+        Window = Window
+    }
 end
 
--- Class handling actions inside toggles, checkboxes, etc.
-local switchactions = {}
-
--- Triggering actions
-function switchactions:trigger(action)
-    print("Triggered action:", action)
+-- Function to create tabs
+function library:CreateTab(tabName, parent)
+    local TabButton = Instance.new("TextButton")
+    
+    TabButton.Parent = parent
+    TabButton.Text = tabName
+    TabButton.Font = Enum.Font.SourceSansBold
+    TabButton.TextSize = 18
+    TabButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+    TabButton.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+    TabButton.Size = UDim2.new(1, 0, 0, 40)
+    TabButton.BorderSizePixel = 0
+    TabButton.MouseButton1Click:Connect(function()
+        print(tabName .. " Tab selected!")
+    end)
+    
+    return TabButton
 end
 
--- Set a particular action
-function switchactions:Set(action, state)
-    print("Setting action:", action, "State:", state)
+-- Function to create toggles
+function library:CreateToggle(toggleName, parent, callback)
+    local ToggleButton = Instance.new("TextButton")
+    local isToggled = false
+    
+    ToggleButton.Parent = parent
+    ToggleButton.Text = toggleName
+    ToggleButton.Font = Enum.Font.SourceSansBold
+    ToggleButton.TextSize = 18
+    ToggleButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+    ToggleButton.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+    ToggleButton.Size = UDim2.new(1, 0, 0, 40)
+    ToggleButton.BorderSizePixel = 0
+    ToggleButton.MouseButton1Click:Connect(function()
+        isToggled = not isToggled
+        ToggleButton.BackgroundColor3 = isToggled and Color3.fromRGB(0, 255, 0) or Color3.fromRGB(50, 50, 50)
+        callback(isToggled)
+    end)
+    
+    return ToggleButton
 end
 
--- Create toggle for cheats
-function switchactions:CreateToggle(label, callback)
-    local toggle = {}
-    toggle.label = label
-    toggle.state = false
-    toggle.callback = callback
+-- Example of using the library
+local window = library:CreateWindow("External Menu Example")
+local mainFrame = window.MainFrame
 
-    function toggle:Toggle()
-        self.state = not self.state
-        self.callback(self.state)
-    end
+-- Create the buttons for each tab (Aimbot is excluded since it's not needed for the RPG)
+local visualsTab = library:CreateTab("Visuals", mainFrame)
+visualsTab.Position = UDim2.new(0, 0, 0, 50)
 
-    return toggle
-end
+local extrasTab = library:CreateTab("Extras", mainFrame)
+extrasTab.Position = UDim2.new(0, 0, 0, 100)
 
--- Trigger cheat (used with buttons or toggles)
-function switchactions:triggercheat(cheatname, state)
-    print("Cheat triggered:", cheatname, "State:", state)
-end
+-- Create toggles in Visuals Tab
+local visualsToggle = library:CreateToggle("ESP", mainFrame, function(state)
+    print("ESP Toggled: " .. tostring(state))
+end)
+visualsToggle.Position = UDim2.new(0, 0, 0, 150)
 
-return library
+-- Create toggles in Extras Tab
+local extrasToggle = library:CreateToggle("Auto Pickup", mainFrame, function(state)
+    print("Auto Pickup Toggled: " .. tostring(state))
+end)
+extrasToggle.Position = UDim2.new(0, 0, 0, 200)
+
+-- More tabs, sliders, buttons, and toggles can be added similarly
