@@ -1,4 +1,4 @@
--- Roblox ImGui Style Menu Script (Expanded Version)
+-- Roblox ImGui-Style Full Menu Script
 
 local library = {} -- Table for library functions and classes
 
@@ -11,13 +11,13 @@ function library:CreateWindow(title)
     local CloseButton = Instance.new("TextButton")
     
     -- Properties
-    Window.Name = "ExternalMenu"
+    Window.Name = "FullMenu"
     Window.Parent = game.CoreGui
     
     MainFrame.Name = "MainFrame"
     MainFrame.Parent = Window
     MainFrame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
-    MainFrame.Size = UDim2.new(0, 300, 0, 400)
+    MainFrame.Size = UDim2.new(0, 400, 0, 500)
     MainFrame.Position = UDim2.new(0.3, 0, 0.3, 0)
     MainFrame.BorderSizePixel = 0
     MainFrame.Draggable = true -- Makes the UI draggable
@@ -35,7 +35,7 @@ function library:CreateWindow(title)
     Title.Font = Enum.Font.SourceSansBold
     Title.TextSize = 18
     Title.TextColor3 = Color3.fromRGB(255, 255, 255)
-    Title.Size = UDim2.new(0, 250, 0, 30)
+    Title.Size = UDim2.new(0, 350, 0, 30)
     Title.Position = UDim2.new(0, 10, 0, 0)
     
     CloseButton.Name = "CloseButton"
@@ -214,10 +214,10 @@ function library:CreateDropdown(dropdownName, parent, items, callback)
 end
 
 -- Example of using the expanded library
-local window = library:CreateWindow("External Menu Example")
+local window = library:CreateWindow("ShadowVis RPG Script Menu")
 local mainFrame = window.MainFrame
 
--- Create the buttons for each tab (Aimbot is excluded since it's not needed for the RPG)
+-- Create Tabs
 local visualsTab = library:CreateTab("Visuals", mainFrame)
 visualsTab.Position = UDim2.new(0, 0, 0, 50)
 
@@ -248,3 +248,4 @@ local extrasDropdown = library:CreateDropdown("Select Item", mainFrame, dropdown
     print("Selected: " .. selected)
 end)
 extrasDropdown.Position = UDim2.new(0, 0, 0, 300)
+
