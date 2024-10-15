@@ -12,6 +12,19 @@ function library:CreateWindow(title)
         tab.name = name
         tab.elements = {}
 
+        -- Create a label
+        function tab:CreateLabel(text)
+            local label = {}
+            label.text = text
+            table.insert(tab.elements, label)
+
+            function label:Show()
+                print("Label:", self.text)
+            end
+
+            return label
+        end
+
         -- Create a dropdown
         function tab:CreateDropdown(label, options, callback)
             local dropdown = {}
